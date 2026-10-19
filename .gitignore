@@ -1,0 +1,30 @@
+# Logs and OS
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Backend (Maven & Java)
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/*.class
+
+# Frontend (Node & Playwright)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/.env.local
+frontend/.env.*.local
