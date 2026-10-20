@@ -1,20 +1,5 @@
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #0f172a;
-  color: #f8fafc;
-  font-family: system-ui, -apple-system, sans-serif;
-  text-align: center;
-}
-
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-p {
-  color: #94a3b8;
+.game-screen {
+  width: 100vw;
+  height: 100vh;
+  background-color: #0b1329;
 }
