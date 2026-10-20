@@ -49,13 +49,17 @@ El backend se construyó con **Java 21** y **Spring Boot 3.3.4** gestionado con 
 
 El frontend fue creado con **React 19** sobre **Vite** para ofrecer una experiencia rápida de recarga en caliente (HMR).
 
-### Archivos clave:
+### Archivos y recursos clave:
 - `frontend/package.json`: Lista de dependencias del ecosistema Node.js y scripts de ejecución.
 - `frontend/vite.config.js`: Configura el puerto de desarrollo (`5175`) y el proxy hacia el backend (`/api` redirige a `http://localhost:8080`).
+- `frontend/public/cards/`: Contiene los recursos gráficos oficiales de las cartas (`OneCard.png` a `TenCard.png`, `QuestionCard.png` para el reverso del mazo, y sus variantes `Mini*.png`). Al estar en `public/`, quedan disponibles directamente como URLs estáticas (`/cards/OneCard.png`) sin necesidad de importaciones complejas.
 - `frontend/src/App.jsx`: Componente raíz de React (actualmente pantalla limpia con el fondo base del juego).
 - `frontend/src/App.css`: Estilos del contenedor visual.
 - `frontend/playwright.config.js`: Configuración del motor de pruebas funcionales automatizadas E2E.
 - `frontend/tests/pelusas.spec.js`: Prueba funcional base que verifica la carga de la aplicación.
+
+> **¿Por qué las imágenes van en el Frontend y no en el Backend?**  
+> El backend en Java únicamente procesa reglas lógicas, números (valores del 1 al 10) y estados del juego (JSON). El frontend es el responsable exclusivo de la capa visual y de renderizar las imágenes correspondientes a cada carta para el usuario.
 
 ### ¿Para qué sirve cada herramienta en el Frontend?
 1. **`React`**: Biblioteca para construir interfaces de usuario declarativas mediante componentes y estados.
