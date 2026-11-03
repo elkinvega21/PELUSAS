@@ -5,12 +5,12 @@ Repositorio oficial: [https://github.com/elkinvega21/PELUSAS.git](https://github
 
 ---
 
-## 👥 Integrantes del Equipo
+##  Integrantes del Equipo
 - **Estudiante(s):** Elkin Vega
 
 ---
 
-## 🚀 Tecnologías Utilizadas
+##  Tecnologías Utilizadas
 
 ### Backend
 - **Lenguaje:** Java 21 LTS
@@ -30,7 +30,7 @@ Repositorio oficial: [https://github.com/elkinvega21/PELUSAS.git](https://github
 
 ---
 
-## 🏛️ Arquitectura del Sistema
+##  Arquitectura del Sistema
 
 El proyecto sigue una arquitectura desacoplada y por capas con estricta separación de responsabilidades:
 
@@ -61,7 +61,7 @@ El **Frontend** es reactivo y solicita acciones del usuario. El **Backend** es l
 
 ---
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 - **Java:** JDK 21 o superior instalado (`java -version`)
 - **Maven:** 3.8+ instalado (`mvn -version`) o uso del wrapper
 - **Node.js:** v20+ o v22+ (`node -v`)
@@ -70,7 +70,7 @@ El **Frontend** es reactivo y solicita acciones del usuario. El **Backend** es l
 
 ---
 
-## ⚙️ Instalación y Configuración
+## Instalación y Configuración
 
 Clonar el repositorio:
 ```bash
@@ -93,7 +93,7 @@ npx playwright install chromium
 
 ---
 
-## ▶️ Ejecución del Proyecto
+## ▶Ejecución del Proyecto
 
 ### 1. Iniciar el Backend
 En una terminal:
@@ -114,7 +114,7 @@ La aplicación web se ejecutará en `http://localhost:5173`.
 
 ---
 
-## 🧪 Ejecución de Pruebas Automatizadas
+##  Ejecución de Pruebas Automatizadas
 
 ### 1. Pruebas Unitarias (Backend)
 Ejecuta las pruebas unitarias con JUnit 5 y Mockito:

@@ -1,0 +1,115 @@
+.settings-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(11, 19, 41, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  padding: 20px;
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 480px;
+  background-color: #17112b;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 15px;
+  color: #fbbf24;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 #000000;
+  margin: 0;
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #21183c;
+  padding: 14px 16px;
+  gap: 16px;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #ffffff;
+}
+
+.setting-subtext {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.retro-btn-toggle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.1s steps(2);
+}
+
+.retro-btn-toggle.active {
+  background-color: #16a34a;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 #86efac,
+    inset -2px -2px 0 #14532d,
+    2px 2px 0 #000;
+}
+
+.retro-btn-toggle.muted {
+  background-color: #dc2626;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 #fca5a5,
+    inset -2px -2px 0 #7f1d1d,
+    2px 2px 0 #000;
+}
+
+.pixel-range-input {
+  accent-color: #fbbf24;
+  cursor: pointer;
+  width: 140px;
+}
+
+.settings-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.settings-footer .retro-btn {
+  width: 100%;
+}
