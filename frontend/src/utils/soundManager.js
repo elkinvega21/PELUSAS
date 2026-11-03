@@ -59,7 +59,31 @@ class SoundManager {
   playButtonClick() {
     if (this.isMuted) return;
     try {
+      // const clickSound = new Audio('/audio/button-click.mp3');
+      const clickSound = new Audio('/audio/pop_sound.mp3');
+      clickSound.volume = Math.min(1, this.volume * 1.2);
+      clickSound.play().catch(() => {});
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  playButtonStealClick(){
+     if (this.isMuted) return;
+    try {
+      // const clickSound = new Audio('/audio/button-click.mp3');
       const clickSound = new Audio('/audio/button-click.mp3');
+      clickSound.volume = Math.min(1, this.volume * 1.2);
+      clickSound.play().catch(() => {});
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  playStolenCards(){
+     if (this.isMuted) return;
+    try {
+      const clickSound = new Audio('/audio/card_stolen.mp3');
       clickSound.volume = Math.min(1, this.volume * 1.2);
       clickSound.play().catch(() => {});
     } catch {

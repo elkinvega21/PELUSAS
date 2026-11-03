@@ -41,6 +41,51 @@
 }
 
 /* Menú central retro */
+.menu-pelusas {
+  --pelusas-y: 85%; /* ? Aquí puedo cambiar la alineación vertical de las pelusas */
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.menu-pelusa-track {
+  position: absolute;
+  top: var(--pelusas-y);
+  left: 0;
+  width: clamp(56px, 7vw, 88px);
+  animation: pelusa-recorrido 20s linear infinite;
+}
+
+.menu-pelusa-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  animation: pelusa-salto 1.8s ease-in-out infinite;
+}
+
+@keyframes pelusa-recorrido {
+  from {
+    transform: translateX(-120px);
+  }
+
+  to {
+    transform: translateX(calc(100vw + 120px));
+  }
+}
+
+@keyframes pelusa-salto {
+  0%, 50%, 100% {
+    transform: translateY(-50%);
+  }
+
+  25%, 75% {
+    transform: translateY(calc(-50% - 22px));
+  }
+}
+
 .menu-container {
   margin: auto;
   display: flex;
@@ -50,6 +95,17 @@
   gap: 24px;
   z-index: 10;
   user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-pelusa-track {
+    animation-play-state: paused;
+  }
+
+  .menu-pelusa-image {
+    animation: none;
+    transform: translateY(-50%);
+  }
 }
 
 .retro-btn {
@@ -188,7 +244,6 @@
     4px 0 0 0 #1e0b38,
     0 4px 0 0 #0d0417;
 }
-
 
 
 
