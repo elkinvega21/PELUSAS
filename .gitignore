@@ -8,6 +8,7 @@ desktop.ini
 .idea/
 *.iml
 .vscode/
+*.code-workspace
 *.suo
 *.ntvs*
 *.njsproj
@@ -26,5 +27,8 @@ frontend/build/
 frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
-frontend/.env.local
-frontend/.env.*.local
+*.env
+*.env.local
+*.env.*.local
+backend/.env
+frontend/.env

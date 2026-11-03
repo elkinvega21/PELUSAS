@@ -1,5 +1,194 @@
 .game-screen {
   width: 100vw;
   height: 100vh;
-  background-color: #0b1329;
+  background-image: url('/cards/Canvas1x.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  position: relative;
+  overflow: hidden;
 }
+
+.audio-toggle-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+  z-index: 50;
+}
+
+.audio-toggle-btn:hover {
+  background: rgba(30, 41, 59, 0.9);
+  transform: scale(1.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.audio-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Menú central retro */
+.menu-container {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 10;
+  user-select: none;
+}
+
+.retro-btn {
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  font-size: 15px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px 36px;
+  min-width: 290px;
+  cursor: pointer;
+  border-radius: 0;
+  border: none;
+  outline: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+  transition: transform 0.05s steps(2);
+}
+
+/* ========================================================
+   BOTÓN JUGAR (Púrpura / Violeta Pelusas con Acentos Dorados)
+   Color inspirado en el monstruo 6 y carta 20
+   ======================================================== */
+.btn-play {
+  background-color: #7928ca;
+  color: #fffbeb;
+  box-shadow:
+    /* Bisel superior / izquierdo en violeta luminoso */
+    inset 4px 4px 0px 0px #a855f7,
+    /* Bisel inferior / derecho en púrpura profundo */
+    inset -4px -4px 0px 0px #4c1d95,
+    /* Borde pixel dorado/oro */
+    0 -4px 0 0 #fbbf24,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #fbbf24,
+    4px 0 0 0 #1e0b38,
+    /* Sombra 3D pixelada profunda */
+    4px 4px 0 0 #1e0b38,
+    -4px 4px 0 0 #1e0b38,
+    4px -4px 0 0 #1e0b38,
+    0 8px 0 0 #0d0417,
+    4px 8px 0 0 #0d0417,
+    8px 8px 0 0 #0d0417;
+  text-shadow: 
+    2px 2px 0px #3b0764,
+    -1px -1px 0px #d97706;
+}
+
+.btn-play:hover {
+  background-color: #8b32e8;
+  transform: translate(-2px, -2px);
+  box-shadow:
+    inset 4px 4px 0px 0px #c084fc,
+    inset -4px -4px 0px 0px #4c1d95,
+    0 -4px 0 0 #fde047,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #fde047,
+    4px 0 0 0 #1e0b38,
+    4px 4px 0 0 #1e0b38,
+    -4px 4px 0 0 #1e0b38,
+    4px -4px 0 0 #1e0b38,
+    0 10px 0 0 #0d0417,
+    4px 10px 0 0 #0d0417,
+    8px 10px 0 0 #0d0417,
+    10px 10px 0 0 #0d0417;
+}
+
+.btn-play:active {
+  transform: translate(4px, 4px);
+  box-shadow:
+    inset 4px 4px 0px 0px #3b0764,
+    inset -4px -4px 0px 0px #a855f7,
+    0 -4px 0 0 #1e0b38,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #1e0b38,
+    4px 0 0 0 #1e0b38,
+    0 4px 0 0 #0d0417;
+}
+
+/* ========================================================
+   BOTÓN CONFIGURACIÓN (Oro / Ámbar Pixel con detalles Púrpura Real)
+   Contraste perfecto que hace pareja armónica con Jugar
+   ======================================================== */
+.btn-settings {
+  background-color: #d97706;
+  color: #ffffff;
+  box-shadow:
+    /* Bisel superior / izquierdo dorado brillante */
+    inset 4px 4px 0px 0px #fcd34d,
+    /* Bisel inferior / derecho bronce oscuro */
+    inset -4px -4px 0px 0px #78350f,
+    /* Borde pixel violeta oscuro */
+    0 -4px 0 0 #a855f7,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #a855f7,
+    4px 0 0 0 #1e0b38,
+    /* Sombra 3D pixelada profunda */
+    4px 4px 0 0 #1e0b38,
+    -4px 4px 0 0 #1e0b38,
+    4px -4px 0 0 #1e0b38,
+    0 8px 0 0 #0d0417,
+    4px 8px 0 0 #0d0417,
+    8px 8px 0 0 #0d0417;
+  text-shadow: 2px 2px 0px #451a03;
+}
+
+.btn-settings:hover {
+  background-color: #f59e0b;
+  transform: translate(-2px, -2px);
+  box-shadow:
+    inset 4px 4px 0px 0px #fef08a,
+    inset -4px -4px 0px 0px #78350f,
+    0 -4px 0 0 #c084fc,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #c084fc,
+    4px 0 0 0 #1e0b38,
+    4px 4px 0 0 #1e0b38,
+    -4px 4px 0 0 #1e0b38,
+    4px -4px 0 0 #1e0b38,
+    0 10px 0 0 #0d0417,
+    4px 10px 0 0 #0d0417,
+    8px 10px 0 0 #0d0417,
+    10px 10px 0 0 #0d0417;
+}
+
+.btn-settings:active {
+  transform: translate(4px, 4px);
+  box-shadow:
+    inset 4px 4px 0px 0px #78350f,
+    inset -4px -4px 0px 0px #fcd34d,
+    0 -4px 0 0 #1e0b38,
+    0 4px 0 0 #1e0b38,
+    -4px 0 0 0 #1e0b38,
+    4px 0 0 0 #1e0b38,
+    0 4px 0 0 #0d0417;
+}
+
+
+
+
