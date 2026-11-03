@@ -48,12 +48,12 @@ public class Mazo {
     }
 
     /** Mezcla las cartas. El {@link Random} se recibe para poder probarlo de forma determinista. */
-    public void barajar(Random random) {
+    void barajar(Random random) {
         Collections.shuffle(cartas, random);
     }
 
-    /** Saca la carta superior del mazo. */
-    public Carta sacar() {
+    /** Saca la carta superior del mazo. Solo {@link Partida} puede hacerlo, para que pasen por las reglas. */
+    Carta sacar() {
         if (cartas.isEmpty()) {
             throw new IllegalStateException("El mazo está vacío");
         }

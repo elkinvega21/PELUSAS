@@ -45,9 +45,19 @@ public class Jugador {
         return Collections.unmodifiableMap(grupos);
     }
 
+    /** Cuántas cartas de ese valor hay en el montón de puntos. */
+    public int cantidadEnMonton(int valor) {
+        return (int) montonPuntos.stream().filter(c -> c.valor() == valor).count();
+    }
+
     /** Suma de los valores nominales del montón de puntos. */
     public int puntos() {
         return montonPuntos.stream().mapToInt(Carta::valor).sum();
+    }
+
+    /** Indica si el jugador ya tiene delante alguna carta de ese valor. */
+    public boolean tieneEnMesa(int valor) {
+        return cartasEnMesa.stream().anyMatch(c -> c.valor() == valor);
     }
 
     void recibirEnMesa(Carta carta) {
@@ -67,5 +77,12 @@ public class Jugador {
         montonPuntos.addAll(cartasEnMesa);
         cartasEnMesa.clear();
         return guardadas;
+    }
+
+    /** Quita todas las cartas de la mesa (sin guardarlas) y las devuelve. */
+    List<Carta> vaciarMesa() {
+        List<Carta> retiradas = List.copyOf(cartasEnMesa);
+        cartasEnMesa.clear();
+        return retiradas;
     }
 }

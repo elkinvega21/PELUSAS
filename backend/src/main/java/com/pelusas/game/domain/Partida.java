@@ -15,16 +15,23 @@ import java.util.UUID;
  *
  * Creación (req. 5.1): se crea únicamente mediante {@link #crear}.
  * Turno (req. 7): {@link #guardarPelusas}, {@link #sacarCarta} y {@link #plantarse}.
+ * Pérdida del turno (req. 8): al repetir un valor teniendo 3 o más cartas delante.
+ * Finalización (req. 9): al agotarse el mazo se guardan las cartas en mesa, se suman los
+ * puntos y se determina el ganador (con desempate).
  * Toda acción valida que el jugador que la pide sea el jugador activo.
  */
 public class Partida {
 
     public static final int MIN_JUGADORES = 2;
+    /** Con esta cantidad de cartas delante (incluida la repetida), repetir un valor hace perder el turno. */
+    public static final int CARTAS_PARA_PERDER_TURNO = 3;
 
     private final UUID id;
     private final LocalDateTime fechaCreacion;
     private final List<Jugador> jugadores;
     private final Mazo mazo;
+    private final List<Carta> descarte = new ArrayList<>();
+    private List<Jugador> ganadores = List.of();
     private int indiceJugadorActual;
     private FaseTurno fase;
     private EstadoPartida estado;
@@ -101,8 +108,14 @@ public class Partida {
     }
 
     /**
-     * Pasos 2 y 3 — Buscar pelusas y robar. Saca una carta del mazo, la deja visible delante
-     * del jugador y le pasa automáticamente todas las cartas del mismo valor que otros
+     * Pasos 2 y 3 — Buscar pelusas y robar. Saca una carta del mazo y la deja visible delante
+     * del jugador.
+     *
+     * Si el valor ya estaba delante del jugador y con esta carta tiene 3 o más cartas en total,
+     * pierde el turno: todas sus cartas van al descarte (no al montón de puntos) y el turno
+     * pasa al siguiente jugador.
+     *
+     * En caso contrario, le pasa automáticamente todas las cartas del mismo valor que otros
      * jugadores tengan boca arriba.
      */
     public ResultadoSacarCarta sacarCarta(String nombreJugador) {
@@ -113,18 +126,31 @@ public class Partida {
 
         Jugador actual = getJugadorActual();
         Carta carta = mazo.sacar();
+        boolean repetida = actual.tieneEnMesa(carta.valor());
         actual.recibirEnMesa(carta);
 
-        List<Carta> robadas = new ArrayList<>();
-        for (Jugador otro : jugadores) {
-            if (otro != actual) {
-                robadas.addAll(otro.retirarDeMesa(carta.valor()));
+        ResultadoSacarCarta resultado;
+        if (repetida && actual.getCartasEnMesa().size() >= CARTAS_PARA_PERDER_TURNO) {
+            List<Carta> descartadas = actual.vaciarMesa();
+            descarte.addAll(descartadas);
+            pasarTurno();
+            resultado = new ResultadoSacarCarta(carta, List.of(), true, descartadas);
+        } else {
+            List<Carta> robadas = new ArrayList<>();
+            for (Jugador otro : jugadores) {
+                if (otro != actual) {
+                    robadas.addAll(otro.retirarDeMesa(carta.valor()));
+                }
             }
+            robadas.forEach(actual::recibirEnMesa);
+            fase = FaseTurno.BUSCANDO;
+            resultado = new ResultadoSacarCarta(carta, List.copyOf(robadas), false, List.of());
         }
-        robadas.forEach(actual::recibirEnMesa);
 
-        fase = FaseTurno.BUSCANDO;
-        return new ResultadoSacarCarta(carta, List.copyOf(robadas));
+        if (mazo.estaVacio()) {
+            finalizar();
+        }
+        return resultado;
     }
 
     /**
@@ -139,7 +165,20 @@ public class Partida {
         pasarTurno();
     }
 
+    /**
+     * Finaliza la partida: cada jugador guarda las cartas que tenga delante, se suman los
+     * puntos y se determina el ganador (aplicando el desempate si hace falta).
+     */
+    private void finalizar() {
+        jugadores.forEach(Jugador::guardarMesa);
+        ganadores = Desempate.determinarGanadores(jugadores);
+        estado = EstadoPartida.FINALIZADA;
+    }
+
     private void validarTurno(String nombreJugador) {
+        if (estado == EstadoPartida.FINALIZADA) {
+            throw new AccionInvalidaException("La partida ya finalizó");
+        }
         if (nombreJugador == null
                 || !getJugadorActual().getNombre().equalsIgnoreCase(nombreJugador.trim())) {
             throw new AccionInvalidaException("No es el turno de " + nombreJugador);
@@ -155,6 +194,48 @@ public class Partida {
     // Consultas
     // ------------------------------------------------------------------
 
+    /** ¿Puede el jugador actual guardar sus pelusas ahora? (al inicio del turno y con cartas delante) */
+    public boolean puedeGuardarPelusas() {
+        return estado == EstadoPartida.EN_CURSO
+                && fase == FaseTurno.INICIO
+                && !getJugadorActual().getCartasEnMesa().isEmpty();
+    }
+
+    /**
+     * ¿Puede el jugador actual sacar una carta ahora? Basta con que queden cartas: la partida
+     * finaliza exactamente cuando el mazo se vacía, así que una partida terminada nunca puede sacar.
+     */
+    public boolean puedeSacarCarta() {
+        return !mazo.estaVacio();
+    }
+
+    /** ¿Puede el jugador actual plantarse ahora? (debe haber sacado al menos una carta en el turno) */
+    public boolean puedePlantarse() {
+        return estado == EstadoPartida.EN_CURSO && fase == FaseTurno.BUSCANDO;
+    }
+
+    /** Estado completo de la partida, con las acciones permitidas, calculado por el backend. */
+    public EstadoActual getEstadoActual() {
+        List<EstadoActual.JugadorEstado> vistaJugadores = jugadores.stream()
+                .map(j -> new EstadoActual.JugadorEstado(
+                        j.getNombre(),
+                        j.getMesaAgrupada(),
+                        j.getCartasEnMesa().size(),
+                        j.getMontonPuntos().size(),
+                        j.puntos()))
+                .toList();
+        return new EstadoActual(
+                id,
+                estado,
+                fase,
+                getJugadorActual().getNombre(),
+                mazo.restantes(),
+                descarte.size(),
+                vistaJugadores,
+                new EstadoActual.Acciones(puedeGuardarPelusas(), puedeSacarCarta(), puedePlantarse()),
+                ganadores.stream().map(Jugador::getNombre).toList());
+    }
+
     /**
      * Comprueba que la partida cumple el estado inicial válido: mazo completo de 110 cartas,
      * ningún jugador con cartas ni puntos, jugador inicial existente, turno en fase INICIO
@@ -164,13 +245,32 @@ public class Partida {
         boolean mazoCompleto = mazo.restantes() == Mazo.TOTAL_CARTAS;
         boolean jugadoresLimpios = jugadores.stream()
                 .allMatch(j -> j.getCartasEnMesa().isEmpty() && j.getMontonPuntos().isEmpty());
+        boolean sinDescarte = descarte.isEmpty();
         boolean inicialValido = indiceJugadorActual >= 0 && indiceJugadorActual < jugadores.size();
         return mazoCompleto
                 && jugadoresLimpios
+                && sinDescarte
                 && inicialValido
                 && jugadores.size() >= MIN_JUGADORES
                 && fase == FaseTurno.INICIO
                 && estado == EstadoPartida.EN_CURSO;
+    }
+
+    /** Jugadores ganadores: uno solo salvo que el empate persista tras el desempate. Vacío si no ha terminado. */
+    public List<Jugador> getGanadores() {
+        return Collections.unmodifiableList(ganadores);
+    }
+
+    /** Resultado final. Solo disponible cuando la partida ha finalizado. */
+    public ResultadoPartida getResultado() {
+        if (estado != EstadoPartida.FINALIZADA) {
+            throw new AccionInvalidaException("La partida aún no ha finalizado");
+        }
+        List<ResultadoJugador> resultados = jugadores.stream()
+                .map(j -> new ResultadoJugador(
+                        j.getNombre(), j.getMontonPuntos().size(), j.puntos(), ganadores.contains(j)))
+                .toList();
+        return new ResultadoPartida(resultados);
     }
 
     public UUID getId() {
@@ -185,8 +285,13 @@ public class Partida {
         return Collections.unmodifiableList(jugadores);
     }
 
-    public Mazo getMazo() {
+    /** Acceso interno al mazo (no público: sus mutadores no deben usarse fuera de las reglas). */
+    Mazo getMazo() {
         return mazo;
+    }
+
+    public int getCartasRestantes() {
+        return mazo.restantes();
     }
 
     public int getIndiceJugadorActual() {
@@ -195,6 +300,11 @@ public class Partida {
 
     public Jugador getJugadorActual() {
         return jugadores.get(indiceJugadorActual);
+    }
+
+    /** Cartas descartadas por pérdidas de turno (fuera de juego). */
+    public List<Carta> getDescarte() {
+        return Collections.unmodifiableList(descarte);
     }
 
     public FaseTurno getFase() {
