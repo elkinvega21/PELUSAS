@@ -78,11 +78,6 @@
 .square-deck-img {
   width: 80px;
   height: auto;
-  box-shadow:
-    2px 2px 0 0 #000,
-    4px 4px 0 0 #4c1d95,
-    6px 6px 0 0 #000;
-  border: 3px solid #fbbf24;
 }
 
 .square-deck-label {
