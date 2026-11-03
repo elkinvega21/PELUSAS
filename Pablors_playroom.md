@@ -29,3 +29,7 @@ Para ejecutar un solo escenario, desde `frontend` usa el archivo `.feature` que 
    Reemplaza el nombre por `button_mute.feature` o `change_volume.feature` para ejecutar los otros escenarios.
 
 El resultado se muestra en la terminal y también se genera el reporte HTML en `frontend/cucumber-report.html`.
+
+FIXME: No hay pantalla de ganador, es decir, se termina el montón de polvo y no dice quien es el ganador
+
+FIXME: El conteiner principal tiene problemas cunado hay 9 o 10 cartas
