@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Settings, Shield } from 'lucide-react';
 import { soundManager } from '../utils/soundManager';
+import { CardReveal } from './CardReveal';
 import './GameBoardView.css';
 
 const MINI_CARD_IMAGES = {
@@ -39,6 +40,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
 
   const [activeTurnIdx, setActiveTurnIdx] = useState(0);
   const [deckRemaining, setDeckRemaining] = useState(105);
+  const [pendingDraw, setPendingDraw] = useState(null);
 
   const [playersState, setPlayersState] = useState(() => {
     const initialState = {};
@@ -88,17 +90,25 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
   // Paso 2: Sacar carta del mazo
   const handleDrawCard = () => {
     soundManager.playButtonClick();
-    if (deckRemaining <= 0) return;
+    if (deckRemaining <= 0 || pendingDraw) return;
 
     const cardVal = Math.floor(Math.random() * 10) + 1;
     const drawnCard = { id: `card-${Date.now()}`, value: cardVal };
-    const currentActiveCards = activeState.activeCards;
+    setPendingDraw(drawnCard);
+    setDeckRemaining(prev => prev - 1);
+  };
 
+  const handleDrawRevealComplete = () => {
+    if (!pendingDraw) return;
+
+    const currentActiveCards = activeState.activeCards;
+    const cardVal = pendingDraw.value;
     const hasDuplicate = currentActiveCards.some(c => c.value === cardVal);
     const totalAfterDraw = currentActiveCards.length + 1;
 
     // Pérdida por repetición con >= 3 cartas
     if (hasDuplicate && totalAfterDraw >= 3) {
+      soundManager.playStolenCards();
       setPlayersState(prev => ({
         ...prev,
         [activePlayer.id]: {
@@ -107,27 +117,26 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
           canSaveAtStart: false,
         }
       }));
-      setDeckRemaining(prev => prev - 1);
+      setPendingDraw(null);
       setTimeout(() => advanceTurn(), 1600);
       return;
     }
 
-    // Se agrega la carta. Nota: NO se roba automático. El usuario debe ver la mesa y presionar el botón de robar si lo detecta.
     setPlayersState(prev => ({
       ...prev,
       [activePlayer.id]: {
         ...prev[activePlayer.id],
-        activeCards: [...prev[activePlayer.id].activeCards, drawnCard],
+        activeCards: [...prev[activePlayer.id].activeCards, pendingDraw],
         canSaveAtStart: false,
       }
     }));
-    setDeckRemaining(prev => prev - 1);
+    setPendingDraw(null);
   };
 
   // BOTÓN ROBAR MANUAL:
   // Color estático, sin avisar al jugador. Si presiona ROBAR, el sistema revisa si tiene valores coincidentes con rivales.
   const handleManualSteal = () => {
-    soundManager.playButtonClick();
+    soundManager.playButtonStealClick(); 
     const myValues = new Set(activeState.activeCards.map(c => c.value));
     let stolen = [];
     const updated = { ...playersState };
@@ -214,6 +223,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
         <button
           type="button"
           className="pixel-btn-icon"
+          disabled={Boolean(pendingDraw)}
           onClick={() => {
             soundManager.playButtonClick();
             onExitGame();
@@ -230,6 +240,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
         <button
           type="button"
           className="pixel-btn-icon"
+          disabled={Boolean(pendingDraw)}
           onClick={onOpenSettings}
           title="Configuración de sonido"
         >
@@ -251,9 +262,14 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
           </div>
 
           {/* Centro: Mazo */}
-          <div className="table-center-deck" onClick={handleDrawCard} title="Montón de polvo">
+          <div
+            className="table-center-deck"
+            onClick={handleDrawCard}
+            title="Montón de polvo"
+            aria-disabled={Boolean(pendingDraw) || deckRemaining <= 0}
+          >
             <img src="/cards/QuestionCard.png" alt="Mazo" className="square-deck-img" />
-            <span className="square-deck-label">ROBAR</span>
+            <span className="square-deck-label">Monton de polvo</span>
           </div>
 
           <div className="table-zone-east">
@@ -293,6 +309,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
                 <button
                   type="button"
                   className="retro-btn btn-settings board-btn-sm"
+                  disabled={Boolean(pendingDraw)}
                   onClick={handleSavePelusas}
                 >
                   GUARDAR
@@ -302,6 +319,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
               <button
                 type="button"
                 className="retro-btn btn-play board-btn-sm"
+                disabled={Boolean(pendingDraw) || deckRemaining <= 0}
                 onClick={handleDrawCard}
               >
                 SACAR CARTA
@@ -312,6 +330,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
                 type="button"
                 id="btn-manual-steal"
                 className="retro-btn btn-settings board-btn-sm btn-steal-static"
+                disabled={Boolean(pendingDraw)}
                 onClick={handleManualSteal}
                 title="Presiona si ves que tienes cartas del mismo valor que algún oponente"
               >
@@ -321,6 +340,7 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
               <button
                 type="button"
                 className="retro-btn btn-settings board-btn-sm"
+                disabled={Boolean(pendingDraw)}
                 onClick={handleStay}
               >
                 PLANTARSE
@@ -329,6 +349,14 @@ export function GameBoardView({ players = [], onExitGame, onOpenSettings }) {
           </div>
         </div>
       </div>
+      {pendingDraw && (
+        <CardReveal
+          card={pendingDraw}
+          imageSrc={CARD_IMAGES[pendingDraw.value] || '/cards/QuestionCard.png'}
+          playerName={activePlayer.name}
+          onComplete={handleDrawRevealComplete}
+        />
+      )}
     </div>
   );
 }

@@ -153,7 +153,6 @@
 .seat-mini-card {
   width: 30px;
   height: auto;
-  border: 1px solid #ffffff;
   box-shadow: 2px 2px 0 #000;
   image-rendering: pixelated;
 }
@@ -219,7 +218,6 @@
 .south-card-img {
   width: 65px;
   height: auto;
-  border: 2px solid #ffffff;
   box-shadow: 2px 3px 0 #000;
 }
 

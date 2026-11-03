@@ -5,6 +5,8 @@ import { GameBoardView } from './components/GameBoardView';
 import { SettingsModal } from './components/SettingsModal';
 import './App.css';
 
+const MENU_PELUSAS = Array.from({ length: 10 }, (_, index) => `/cards/Pelusa${index + 1}.png`);
+
 function App() {
   const [currentView, setCurrentView] = useState('menu'); // 'menu' | 'lobby' | 'game'
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -33,25 +35,45 @@ function App() {
     <div className="game-screen">
       {/* 1. Menú Principal */}
       {currentView === 'menu' && (
-        <div className="menu-container">
-          <button 
-            id="btn-play"
-            type="button" 
-            className="retro-btn btn-play"
-            onClick={handlePlayClick}
-          >
-            JUGAR
-          </button>
+        <>
+          <div className="menu-pelusas" aria-hidden="true">
+            {MENU_PELUSAS.map((src, index) => (
+              <div
+                className="menu-pelusa-track"
+                key={src}
+                style={{ animationDelay: `${index * -2}s` }}
+              >
+                <img
+                  className="menu-pelusa-image"
+                  src={src}
+                  alt=""
+                  draggable="false"
+                  style={{ animationDelay: `${index * -0.15}s` }}
+                />
+              </div>
+            ))}
+          </div>
 
-          <button 
-            id="btn-settings"
-            type="button" 
-            className="retro-btn btn-settings"
-            onClick={handleSettingsClick}
-          >
-            CONFIGURACIÓN
-          </button>
-        </div>
+          <div className="menu-container">
+            <button 
+              id="btn-play"
+              type="button" 
+              className="retro-btn btn-play"
+              onClick={handlePlayClick}
+            >
+              JUGAR
+            </button>
+
+            <button 
+              id="btn-settings"
+              type="button" 
+              className="retro-btn btn-settings"
+              onClick={handleSettingsClick}
+            >
+              CONFIGURACIÓN
+            </button>
+          </div>
+        </>
       )}
 
       {/* 2. Modal de Configuración */}
@@ -80,6 +102,5 @@ function App() {
 }
 
 export default App;
-
 
 
