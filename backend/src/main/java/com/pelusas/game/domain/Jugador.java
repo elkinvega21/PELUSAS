@@ -60,6 +60,10 @@ public class Jugador {
         return cartasEnMesa.stream().anyMatch(c -> c.valor() == valor);
     }
 
+    void agregarAlMonton(Carta carta) {
+        montonPuntos.add(carta);
+    }
+
     void recibirEnMesa(Carta carta) {
         cartasEnMesa.add(carta);
     }

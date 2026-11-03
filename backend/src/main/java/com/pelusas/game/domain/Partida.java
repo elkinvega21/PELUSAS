@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -37,13 +38,19 @@ public class Partida {
     private EstadoPartida estado;
 
     private Partida(List<Jugador> jugadores, Mazo mazo, int indiceInicial) {
-        this.id = UUID.randomUUID();
-        this.fechaCreacion = LocalDateTime.now();
+        this(UUID.randomUUID(), LocalDateTime.now(), jugadores, mazo, indiceInicial,
+                FaseTurno.INICIO, EstadoPartida.EN_CURSO);
+    }
+
+    private Partida(UUID id, LocalDateTime fechaCreacion, List<Jugador> jugadores, Mazo mazo,
+                    int indiceJugadorActual, FaseTurno fase, EstadoPartida estado) {
+        this.id = id;
+        this.fechaCreacion = fechaCreacion;
         this.jugadores = jugadores;
         this.mazo = mazo;
-        this.indiceJugadorActual = indiceInicial;
-        this.fase = FaseTurno.INICIO;
-        this.estado = EstadoPartida.EN_CURSO;
+        this.indiceJugadorActual = indiceJugadorActual;
+        this.fase = fase;
+        this.estado = estado;
     }
 
     public static Partida crear(List<String> nombres) {
@@ -64,6 +71,73 @@ public class Partida {
     /** Crea una partida con un mazo y jugador inicial dados (para pruebas deterministas). */
     static Partida conMazo(List<String> nombres, Mazo mazo, int indiceInicial) {
         return new Partida(definirJugadores(nombres), mazo, indiceInicial);
+    }
+
+    /**
+     * Reconstruye una partida a partir de una foto guardada. Rechaza datos inconsistentes
+     * (cartas que sobran o faltan, jugador actual inexistente, estado que no concuerda con el mazo
+     * o con los ganadores), para que una partida corrupta no pueda volver a jugarse.
+     */
+    public static Partida restaurar(PartidaSnapshot foto) {
+        Objects.requireNonNull(foto.id(), "id");
+        Objects.requireNonNull(foto.fechaCreacion(), "fechaCreacion");
+        Objects.requireNonNull(foto.estado(), "estado");
+        Objects.requireNonNull(foto.fase(), "fase");
+
+        List<Jugador> jugadores = definirJugadores(
+                foto.jugadores().stream().map(PartidaSnapshot.JugadorSnapshot::nombre).toList());
+
+        List<Carta> todas = new ArrayList<>(foto.mazo());
+        todas.addAll(foto.descarte());
+        List<Jugador> ganadores = new ArrayList<>();
+        for (int i = 0; i < jugadores.size(); i++) {
+            Jugador jugador = jugadores.get(i);
+            PartidaSnapshot.JugadorSnapshot datos = foto.jugadores().get(i);
+            datos.mesa().forEach(jugador::recibirEnMesa);
+            datos.monton().forEach(jugador::agregarAlMonton);
+            todas.addAll(datos.mesa());
+            todas.addAll(datos.monton());
+            if (datos.ganador()) {
+                ganadores.add(jugador);
+            }
+        }
+        validarMazoCompleto(todas);
+
+        if (foto.indiceJugadorActual() < 0 || foto.indiceJugadorActual() >= jugadores.size()) {
+            throw new IllegalArgumentException("El jugador actual no existe: " + foto.indiceJugadorActual());
+        }
+
+        boolean finalizada = foto.estado() == EstadoPartida.FINALIZADA;
+        if (finalizada != foto.mazo().isEmpty()) {
+            throw new IllegalArgumentException("El estado de la partida no concuerda con el mazo");
+        }
+        boolean mesasVacias = jugadores.stream().allMatch(j -> j.getCartasEnMesa().isEmpty());
+        if (finalizada && (!mesasVacias || ganadores.isEmpty())) {
+            throw new IllegalArgumentException("Una partida finalizada no puede tener cartas en mesa y debe tener ganador");
+        }
+        if (!finalizada && !ganadores.isEmpty()) {
+            throw new IllegalArgumentException("Una partida en curso no puede tener ganadores");
+        }
+
+        Partida partida = new Partida(foto.id(), foto.fechaCreacion(), jugadores, Mazo.deCartas(foto.mazo()),
+                foto.indiceJugadorActual(), foto.fase(), foto.estado());
+        partida.descarte.addAll(foto.descarte());
+        partida.ganadores = List.copyOf(ganadores);
+        return partida;
+    }
+
+    private static void validarMazoCompleto(List<Carta> todas) {
+        if (todas.size() != Mazo.TOTAL_CARTAS) {
+            throw new IllegalArgumentException(
+                    "La partida debe tener " + Mazo.TOTAL_CARTAS + " cartas en total y tiene " + todas.size());
+        }
+        for (int valor = Carta.VALOR_MINIMO; valor <= Carta.VALOR_MAXIMO; valor++) {
+            final int v = valor;
+            long cantidad = todas.stream().filter(c -> c.valor() == v).count();
+            if (cantidad != Mazo.copiasDelValor(v)) {
+                throw new IllegalArgumentException("Cantidad incorrecta de cartas de valor " + v + ": " + cantidad);
+            }
+        }
     }
 
     private static List<Jugador> definirJugadores(List<String> nombres) {
@@ -212,6 +286,19 @@ public class Partida {
     /** ¿Puede el jugador actual plantarse ahora? (debe haber sacado al menos una carta en el turno) */
     public boolean puedePlantarse() {
         return estado == EstadoPartida.EN_CURSO && fase == FaseTurno.BUSCANDO;
+    }
+
+    /** Foto inmutable del estado completo, para guardar la partida y poder restaurarla. */
+    public PartidaSnapshot snapshot() {
+        List<PartidaSnapshot.JugadorSnapshot> fotoJugadores = jugadores.stream()
+                .map(j -> new PartidaSnapshot.JugadorSnapshot(
+                        j.getNombre(),
+                        List.copyOf(j.getCartasEnMesa()),
+                        List.copyOf(j.getMontonPuntos()),
+                        ganadores.contains(j)))
+                .toList();
+        return new PartidaSnapshot(id, fechaCreacion, estado, fase, indiceJugadorActual,
+                mazo.enOrdenDeExtraccion(), List.copyOf(descarte), fotoJugadores);
     }
 
     /** Estado completo de la partida, con las acciones permitidas, calculado por el backend. */

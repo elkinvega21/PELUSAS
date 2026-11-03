@@ -60,6 +60,13 @@ public class Mazo {
         return cartas.remove(cartas.size() - 1);
     }
 
+    /** Copia de las cartas en el orden en que se sacarán (la primera es la que sale primero). */
+    List<Carta> enOrdenDeExtraccion() {
+        List<Carta> copia = new ArrayList<>(cartas);
+        Collections.reverse(copia);
+        return copia;
+    }
+
     public int restantes() {
         return cartas.size();
     }
