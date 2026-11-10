@@ -33,3 +33,12 @@ El resultado se muestra en la terminal y también se genera el reporte HTML en `
 FIXME: No hay pantalla de ganador, es decir, se termina el montón de polvo y no dice quien es el ganador
 
 FIXME: El conteiner principal tiene problemas cunado hay 9 o 10 cartas
+
+correr las pruebas básicas
+cd frontend
+npx cucumber-js --config tests/cucumber.js --format progress tests/features/assert_fail_turn.feature tests/features/assert_get_card.feature
+
+## Código para ejecutar los visuales
+$env:HEADED='1'
+npx cucumber-js --config tests/cucumber.js --format progress tests/features/assert_fail_turn.feature tests/features/assert_get_card.feature
+Remove-Item Env:\HEADED

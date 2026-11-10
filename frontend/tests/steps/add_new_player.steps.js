@@ -25,3 +25,5 @@ Then('veo la página donde están las cartas', async function () {
   await expect(this.page.getByText('Jugador 3', { exact: true })).toBeVisible();
   await expect(this.page.getByRole('img', { name: 'Mazo' })).toBeVisible();
 });
+
+// assert(count > 0,  "No products found");

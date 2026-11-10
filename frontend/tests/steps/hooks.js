@@ -43,7 +43,7 @@ BeforeAll(async function () {
 });
 
 Before(async function () {
-  this.browser = await chromium.launch({ headless: true });
+  this.browser = await chromium.launch({ headless: process.env.HEADED !== '1' });
   this.page = await this.browser.newPage();
 });
 

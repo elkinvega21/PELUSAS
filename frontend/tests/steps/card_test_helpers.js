@@ -19,6 +19,18 @@ export async function readSafePoints(page) {
   return Number(match[1]);
 }
 
+export async function startGame(world, randomValue = 0.2) {
+  const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:5176';
+  await world.page.addInitScript(value => {
+    Math.random = () => value;
+  }, randomValue);
+  await world.page.goto(baseUrl);
+  await world.page.getByRole('button', { name: 'JUGAR' }).click();
+  await world.page.getByRole('button', { name: 'COMENZAR PARTIDA' }).click();
+  await expect(world.page.locator('.square-table-screen')).toBeVisible();
+  await expect(world.page.locator('.south-title')).toContainText('Jugador 1 (TU TURNO)');
+}
+
 export async function drawCard(world, trigger = 'button') {
   world.cardsBeforeDraw = await activeCards(world.page).count();
 
