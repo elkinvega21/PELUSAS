@@ -1,0 +1,240 @@
+.bot-loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 24, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+.bot-loader-card {
+  width: 100%;
+  max-width: 550px;
+  background: #141028;
+  border: 4px solid #6366f1;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #ffffff;
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.bot-loader-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bot-loader-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid #818cf8;
+  color: #a5b4fc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bot-loader-title {
+  font-size: 15px;
+  color: #38bdf8;
+  text-shadow: 2px 2px #000000;
+  margin: 0;
+}
+
+.bot-loader-subtitle {
+  font-family: sans-serif;
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Barra de progreso retro */
+.bot-progress-container {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background: #090615;
+  border: 2px solid #38bdf8;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+.bot-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+  transition: width 0.15s ease-out;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.bot-progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.bot-status-msg {
+  font-family: sans-serif;
+  font-size: 12px;
+  color: #facc15;
+  text-align: center;
+  margin: 0;
+  min-height: 18px;
+  font-weight: 500;
+}
+
+/* Grid de los 4 Bots */
+.bots-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bot-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #1c163a;
+  border: 2px solid;
+  border-radius: 8px;
+  transition: transform 0.2s ease, border-color 0.3s ease;
+}
+
+.bot-card.ready {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.bot-card.connecting {
+  opacity: 0.6;
+}
+
+.bot-avatar-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background: #0d0a1e;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.bot-pelusa-avatar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.bot-ready-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border: 2px solid #141028;
+  border-radius: 50%;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+.bot-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.bot-name {
+  font-size: 10px;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bot-trait {
+  font-family: sans-serif;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.bot-status-pill {
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.bot-status-pill.online {
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.bot-status-pill.loading {
+  color: #facc15;
+  background: rgba(234, 179, 8, 0.15);
+}
+
+/* Footer */
+.bot-loader-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bot-cancel-btn {
+  flex: 1;
+  min-width: 0 !important;
+  font-size: 9px !important;
+  padding: 12px 10px !important;
+}
+
+.bot-start-now-btn {
+  flex: 1.6;
+  min-width: 0 !important;
+  font-size: 9.5px !important;
+  padding: 12px 10px !important;
+  background-color: #2563eb !important;
+  border-color: #60a5fa !important;
+  white-space: nowrap;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+

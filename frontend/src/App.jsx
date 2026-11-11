@@ -1,33 +1,119 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { soundManager } from './utils/soundManager';
-import { LobbyView } from './components/LobbyView';
-import { GameBoardView } from './components/GameBoardView';
-import { SettingsModal } from './components/SettingsModal';
+import { MenuView } from './features/menu';
+import { LobbyView, BotLoadingModal, JoinCodeModal } from './features/lobby';
+import { GameBoardView } from './features/game';
+import { SettingsModal } from './features/settings';
+import { LeaderboardModal } from './features/leaderboard';
+import { registrarIngresoJugador } from './services/supabaseService';
 import './App.css';
 
-const MENU_PELUSAS = Array.from({ length: 10 }, (_, index) => `/cards/Pelusa${index + 1}.png`);
+function getUrlRoomCode() {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('room') || params.get('code') || null;
+  }
+  return null;
+}
 
 function App() {
-  const [currentView, setCurrentView] = useState('menu'); // 'menu' | 'lobby' | 'game'
+  const initialUrlCode = getUrlRoomCode();
+
+  // Si se entra por link (ej: ?room=PELU-7926) o por código, llevar directo a la sala online
+  const [currentView, setCurrentView] = useState(() => (initialUrlCode ? 'lobby' : 'menu'));
+  const [gameMode, setGameMode] = useState(() => (initialUrlCode ? 'online' : 'local'));
+  const [activeRoomCode, setActiveRoomCode] = useState(initialUrlCode);
+
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isBotLoadingOpen, setIsBotLoadingOpen] = useState(false);
+  const [isJoinCodeModalOpen, setIsJoinCodeModalOpen] = useState(false);
   const [gamePlayers, setGamePlayers] = useState([]);
 
   useEffect(() => {
     soundManager.playBgMusic();
   }, []);
 
-  const handlePlayClick = () => {
+  // Escuchar cambios en la URL (por ejemplo si el usuario pega o cambia el link en la barra de direcciones)
+  useEffect(() => {
+    const handlePopState = () => {
+      const code = getUrlRoomCode();
+      if (code) {
+        setActiveRoomCode(code);
+        setGameMode('online');
+        setCurrentView('lobby');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handlePlayClick = (mode = 'local') => {
     soundManager.playButtonClick();
-    setCurrentView('lobby');
+    setGameMode(mode);
+    if (mode === 'bots') {
+      setIsBotLoadingOpen(true);
+    } else {
+      setCurrentView('lobby');
+    }
   };
+
+  const handleStartBotsGame = (roster) => {
+    setIsBotLoadingOpen(false);
+    setGamePlayers(roster);
+    setGameMode('bots');
+    registrarIngresoJugador(roster[0]?.name || 'Tú');
+    setCurrentView('game');
+  };
+
+  const handleOpenJoinCode = () => {
+    soundManager.playButtonClick();
+    setIsJoinCodeModalOpen(true);
+  };
+
+  // Cuando el usuario ingresa un código de sala para unirse
+  const handleJoinWithCode = (code) => {
+    soundManager.playButtonClick();
+    setIsJoinCodeModalOpen(false);
+    setActiveRoomCode(code);
+    setGameMode('online');
+    setCurrentView('lobby');
+
+    if (typeof window !== 'undefined' && window.history) {
+      const newUrl = `${window.location.pathname}?room=${code}`;
+      window.history.pushState({ path: newUrl }, '', newUrl);
+    }
+  };
+
+  const handleBackToMenu = useCallback(() => {
+    soundManager.playButtonClick();
+    setActiveRoomCode(null);
+    if (typeof window !== 'undefined' && window.history) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    setCurrentView('menu');
+  }, []);
 
   const handleSettingsClick = () => {
     soundManager.playButtonClick();
     setIsSettingsOpen(true);
   };
 
-  const handleStartGame = (players) => {
+  const handleOpenLeaderboard = () => {
+    soundManager.playButtonClick();
+    setIsLeaderboardOpen(true);
+  };
+
+  const handleStartGame = (players, mode = gameMode) => {
     setGamePlayers(players);
+    setGameMode(mode);
+    // Registro de las personas que entran a jugar en Supabase
+    players.forEach(p => {
+      if (!p.isBot) {
+        registrarIngresoJugador(p.name);
+      }
+    });
     setCurrentView('game');
   };
 
@@ -35,45 +121,12 @@ function App() {
     <div className="game-screen">
       {/* 1. Menú Principal */}
       {currentView === 'menu' && (
-        <>
-          <div className="menu-pelusas" aria-hidden="true">
-            {MENU_PELUSAS.map((src, index) => (
-              <div
-                className="menu-pelusa-track"
-                key={src}
-                style={{ animationDelay: `${index * -2}s` }}
-              >
-                <img
-                  className="menu-pelusa-image"
-                  src={src}
-                  alt=""
-                  draggable="false"
-                  style={{ animationDelay: `${index * -0.15}s` }}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="menu-container">
-            <button 
-              id="btn-play"
-              type="button" 
-              className="retro-btn btn-play"
-              onClick={handlePlayClick}
-            >
-              JUGAR
-            </button>
-
-            <button 
-              id="btn-settings"
-              type="button" 
-              className="retro-btn btn-settings"
-              onClick={handleSettingsClick}
-            >
-              CONFIGURACIÓN
-            </button>
-          </div>
-        </>
+        <MenuView 
+          onPlay={handlePlayClick} 
+          onOpenSettings={handleSettingsClick}
+          onOpenLeaderboard={handleOpenLeaderboard}
+          onOpenJoinCode={handleOpenJoinCode}
+        />
       )}
 
       {/* 2. Modal de Configuración */}
@@ -81,20 +134,46 @@ function App() {
         <SettingsModal onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {/* 3. Vista de Configuración de Jugadores (Lobby) */}
+      {/* 3. Modal de Ranking & Historial (Supabase) */}
+      {isLeaderboardOpen && (
+        <LeaderboardModal onClose={() => setIsLeaderboardOpen(false)} />
+      )}
+
+      {/* 3.1 Modal de Carga para Partida vs Bots */}
+      {isBotLoadingOpen && (
+        <BotLoadingModal 
+          playerName="Tú"
+          onCancel={() => setIsBotLoadingOpen(false)}
+          onReady={handleStartBotsGame}
+        />
+      )}
+
+      {/* 3.2 Modal para Unirse con Código desde el Menú */}
+      {isJoinCodeModalOpen && (
+        <JoinCodeModal
+          onClose={() => setIsJoinCodeModalOpen(false)}
+          onJoinRoom={handleJoinWithCode}
+        />
+      )}
+
+      {/* 4. Vista de Configuración de Jugadores (Lobby / Sala) */}
       {currentView === 'lobby' && (
         <LobbyView 
-          onBack={() => setCurrentView('menu')}
+          initialMode={gameMode}
+          initialRoomCode={activeRoomCode}
+          onBack={handleBackToMenu}
           onStartGame={handleStartGame}
         />
       )}
 
-      {/* 4. Tablero del Juego (Mesa Cuadrada) */}
+      {/* 5. Tablero del Juego (Mesa Cuadrada Tabletop) */}
       {currentView === 'game' && (
         <GameBoardView 
           players={gamePlayers}
-          onExitGame={() => setCurrentView('menu')}
+          gameMode={gameMode}
+          onExitGame={handleBackToMenu}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenLeaderboard={handleOpenLeaderboard}
         />
       )}
     </div>
@@ -102,5 +181,3 @@ function App() {
 }
 
 export default App;
-
-

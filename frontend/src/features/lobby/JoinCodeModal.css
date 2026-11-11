@@ -1,0 +1,140 @@
+.join-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(10, 6, 24, 0.88);
+  backdrop-filter: blur(6px);
+  z-index: 120;
+  padding: 16px;
+  animation: fadeInJoinModal 0.2s ease-out;
+}
+
+.join-modal-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: #16102c;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #ffffff;
+}
+
+.join-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.join-modal-icon-badge {
+  background-color: #3b0764;
+  border: 1px solid #c084fc;
+  color: #e9d5ff;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.join-modal-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: #fbbf24;
+  margin: 0;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.pixel-close-btn {
+  background-color: #2e1065;
+  border: 1px solid #a855f7;
+  color: #cbd5e1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.pixel-close-btn:hover {
+  background-color: #3b0764;
+  color: #ffffff;
+}
+
+.join-modal-desc {
+  font-family: sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.join-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.join-modal-input {
+  width: 100%;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 14px !important;
+  text-align: center;
+  letter-spacing: 2px;
+  color: #38bdf8 !important;
+  background-color: #0b071a !important;
+  border: 2px solid #818cf8 !important;
+  padding: 12px !important;
+}
+
+.join-modal-input:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.join-modal-error {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #fca5a5;
+  background-color: #7f1d1d;
+  padding: 8px;
+  border: 1px solid #ef4444;
+}
+
+.join-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.join-cancel-btn {
+  flex: 1;
+  font-size: 9px !important;
+  padding: 10px !important;
+}
+
+.join-submit-btn {
+  flex: 1.5;
+  font-size: 9px !important;
+  padding: 10px !important;
+  background-color: #059669 !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+}
+
+.join-submit-btn:hover {
+  background-color: #047857 !important;
+}
+
+@keyframes fadeInJoinModal {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+

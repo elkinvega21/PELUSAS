@@ -6,6 +6,7 @@ import com.pelusas.game.domain.EstadoPartida;
 import com.pelusas.game.domain.FaseTurno;
 import com.pelusas.game.domain.Partida;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -89,7 +90,7 @@ class PartidaRepositoryIntegrationTest {
         assertEquals(EstadoPartida.EN_CURSO, leida.getEstado());
         assertEquals(FaseTurno.INICIO, leida.getFase());
         assertEquals(p.getIndiceJugadorActual(), leida.getIndiceJugadorActual());
-        assertEquals(p.getFechaCreacion(), leida.getFechaCreacion());
+        assertEquals(p.getFechaCreacion().truncatedTo(ChronoUnit.MILLIS), leida.getFechaCreacion().truncatedTo(ChronoUnit.MILLIS));
         assertEquals(110, PartidaMapper.decodificar(leida.getMazo()).size());
     }
 

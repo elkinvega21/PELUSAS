@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './CardReveal.css';
 
-const REVEAL_DURATION_MS = 1000;
+const REVEAL_DURATION_MS = 700;
 
 export function CardReveal({ card, imageSrc, playerName, onComplete }) {
   useEffect(() => {
@@ -23,3 +23,4 @@ export function CardReveal({ card, imageSrc, playerName, onComplete }) {
     </div>
   );
 }
+

@@ -1,0 +1,225 @@
+.game-over-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(11, 7, 24, 0.88);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  padding: 16px;
+  animation: game-over-fade-in 0.3s ease-out;
+}
+
+@keyframes game-over-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.game-over-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #17112b;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Banner de Abandono */
+.abandoned-banner {
+  background: linear-gradient(135deg, #7f1d1d, #450a0a);
+  border: 2px solid #ef4444;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.abandoned-banner-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #fca5a5;
+  letter-spacing: 1px;
+}
+
+.abandoned-banner-desc {
+  font-family: sans-serif;
+  font-size: 11px;
+  color: #fecaca;
+}
+
+.abandoned-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  background-color: #ef4444;
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.game-over-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-over-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  color: #fbbf24;
+  letter-spacing: 2px;
+  text-shadow: 3px 3px 0 #000;
+  margin: 0;
+}
+
+.game-over-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* Tarjeta Destacada del Ganador */
+.winner-banner {
+  background: linear-gradient(135deg, #78350f, #3b0764);
+  border: 3px solid #fbbf24;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.winner-badge-icon {
+  font-size: 40px;
+  animation: bounce-trophy 1.2s infinite alternate;
+}
+
+@keyframes bounce-trophy {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+.winner-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.winner-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #fde047;
+}
+
+.winner-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 15px;
+  color: #ffffff;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.winner-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #4ade80;
+}
+
+/* Tabla de Posiciones */
+.ranking-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ranking-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: #21183c;
+  transition: transform 0.1s ease;
+}
+
+.ranking-row.winner-row {
+  border-left: 4px solid #fbbf24;
+  background-color: #2e1d52;
+}
+
+.ranking-col-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ranking-position {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #fbbf24;
+  min-width: 24px;
+}
+
+.ranking-player-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.ranking-col-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ranking-cards {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.ranking-points {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Botones de acción */
+.game-over-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.game-over-actions .retro-btn {
+  flex: 1;
+  min-width: 0 !important;
+  font-size: 11px !important;
+  padding: 12px 14px !important;
+  white-space: nowrap;
+}
+

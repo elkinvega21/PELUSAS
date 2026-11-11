@@ -1,0 +1,226 @@
+.leaderboard-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(11, 19, 41, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  padding: 16px;
+}
+
+.leaderboard-card {
+  width: 100%;
+  max-width: 580px;
+  background-color: #17112b;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 90vh;
+}
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leaderboard-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #fbbf24;
+  margin: 0;
+}
+
+/* Tarjeta del Campeón */
+.champion-card {
+  background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+  border: 2px solid #fbbf24;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.champion-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #fbbf24;
+}
+
+.champion-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.champion-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.champion-stat {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.15);
+  padding: 4px 8px;
+  border: 1px solid #4ade80;
+}
+
+.champion-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Pestañas */
+.leaderboard-tabs-row {
+  display: flex;
+  gap: 8px;
+  background-color: #0d0417;
+  padding: 4px;
+}
+
+.leaderboard-tab-btn {
+  flex: 1;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 8px;
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.leaderboard-tab-btn:hover {
+  color: #fbbf24;
+}
+
+.leaderboard-tab-btn.active {
+  background-color: #3b0764;
+  color: #fbbf24;
+  box-shadow: inset 0 -2px 0 0 #fbbf24;
+}
+
+/* Cuerpo de la lista */
+.leaderboard-body {
+  overflow-y: auto;
+  max-height: 280px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderboard-loading,
+.leaderboard-empty {
+  margin: auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+.pixel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #ffffff;
+}
+
+.pixel-table th {
+  background-color: #0d0417;
+  color: #fbbf24;
+  padding: 8px;
+  text-align: left;
+  border-bottom: 2px solid #3b0764;
+}
+
+.pixel-table td {
+  padding: 8px;
+  border-bottom: 1px solid #21183c;
+}
+
+.pixel-table tr.gold-row {
+  background-color: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.highlight-cell {
+  color: #4ade80;
+}
+
+/* Filas del historial */
+.history-row {
+  background-color: #21183c;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-winner {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #fbbf24;
+}
+
+.history-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.history-details-row {
+  display: flex;
+  gap: 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.history-roster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: #a855f7;
+  margin-top: 2px;
+}
+
+.leaderboard-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.spin-anim {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

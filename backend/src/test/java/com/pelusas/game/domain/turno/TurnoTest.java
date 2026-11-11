@@ -14,10 +14,17 @@ class TurnoTest {
         return new Carta(valor);
     }
 
-    /** Partida con mazo fijo: las cartas salen en el orden indicado. Inicia Ana. */
-    private static Partida partida(int... valores) {
+    /** Mazo exacto: las cartas salen en el orden indicado y la partida termina al sacar la última. */
+    private static Partida partidaExacta(int... valores) {
         List<Carta> cartas = Arrays.stream(valores).mapToObj(Carta::new).toList();
         return Partida.conMazo(List.of("Ana", "Luis", "Eva"), Mazo.deCartas(cartas), 0);
+    }
+
+    /** Igual que la exacta, pero con una carta de reserva al final que no se saca: la partida sigue en curso. */
+    private static Partida partida(int... valores) {
+        int[] conReserva = Arrays.copyOf(valores, valores.length + 1);
+        conReserva[valores.length] = 10;
+        return partidaExacta(conReserva);
     }
 
     private static Jugador jugador(Partida p, int indice) {
@@ -61,7 +68,7 @@ class TurnoTest {
 
     @Test
     void sacarCartaLaDejaVisibleDelanteDelJugador() {
-        Partida p = partida(4, 5, 6);
+        Partida p = partidaExacta(4, 5, 6);
         ResultadoSacarCarta r = p.sacarCarta("Ana");
         assertEquals(c(4), r.carta());
         assertEquals(List.of(c(4)), jugador(p, 0).getCartasEnMesa());
@@ -92,7 +99,7 @@ class TurnoTest {
 
     @Test
     void sacarConMazoVacioLanzaExcepcion() {
-        assertThrows(AccionInvalidaException.class, () -> partida().sacarCarta("Ana"));
+        assertThrows(AccionInvalidaException.class, () -> partidaExacta().sacarCarta("Ana"));
     }
 
     @Test
@@ -105,7 +112,7 @@ class TurnoTest {
 
     @Test
     void laMesaAgrupadaSeOrdenaPorValorYSeparaLosDistintos() {
-        Partida p = partida(7, 2, 7);
+        Partida p = partida(7, 7, 2);
         p.sacarCarta("Ana");
         p.sacarCarta("Ana");
         p.sacarCarta("Ana");
@@ -262,6 +269,24 @@ class TurnoTest {
     }
 
     @Test
+    void siElJugadorTieneMasDeTresCartasDeEseValorSoloSeRobanTres() {
+        // Ana tiene 4 cartas de valor 5; Luis saca un 5 y solo le puede robar m�ximo 3.
+        Partida p = partida(5, 5);
+        p.sacarCarta("Ana");
+        Jugador ana = jugador(p, 0);
+        ana.recibirEnMesa(c(5));
+        ana.recibirEnMesa(c(5));
+        ana.recibirEnMesa(c(5));
+        assertEquals(4, ana.getCartasEnMesa().size());
+        p.plantarse("Ana");
+
+        ResultadoSacarCarta r = p.sacarCarta("Luis");
+        assertEquals(3, r.robadas().size(), "Solo se deben robar m�ximo 3 cartas");
+        assertEquals(1, ana.getCartasEnMesa().size(), "A Ana le debe quedar 1 carta excedente");
+        assertEquals(List.of(c(5)), ana.getCartasEnMesa());
+    }
+
+    @Test
     void lasCartasRobadasNoVanAlMontonDeQuienLasPierde() {
         Partida p = partida(5, 5);
         p.sacarCarta("Ana");
@@ -287,3 +312,4 @@ class TurnoTest {
         assertFalse(p.esEstadoInicialValido());
     }
 }
+

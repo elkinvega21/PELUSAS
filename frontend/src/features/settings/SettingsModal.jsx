@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, ArrowLeft, Sliders, Check } from 'lucide-react';
-import { soundManager } from '../utils/soundManager';
+import { Volume2, VolumeX, ArrowLeft } from 'lucide-react';
+import { soundManager } from '../../utils/soundManager';
 import './SettingsModal.css';
 
 export function SettingsModal({ onClose }) {

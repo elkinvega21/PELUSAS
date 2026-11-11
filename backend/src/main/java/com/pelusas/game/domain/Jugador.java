@@ -2,6 +2,7 @@ package com.pelusas.game.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,6 +16,8 @@ import java.util.TreeMap;
  * puede alterarlos, para que todas las reglas pasen por ella.
  */
 public class Jugador {
+
+    public static final int MAX_CARTAS_ROBO = 3;
 
     private final String nombre;
     private final List<Carta> cartasEnMesa = new ArrayList<>();
@@ -68,10 +71,24 @@ public class Jugador {
         cartasEnMesa.add(carta);
     }
 
-    /** Quita de la mesa todas las cartas de ese valor y las devuelve. */
+    /**
+     * Quita de la mesa como máximo 3 cartas de ese valor.
+     * Si el jugador tiene más de 3 cartas de ese valor, solo se pueden robar 3 de esas (máximo 3).
+     */
     List<Carta> retirarDeMesa(int valor) {
-        List<Carta> retiradas = cartasEnMesa.stream().filter(c -> c.valor() == valor).toList();
-        cartasEnMesa.removeIf(c -> c.valor() == valor);
+        return retirarDeMesa(valor, MAX_CARTAS_ROBO);
+    }
+
+    List<Carta> retirarDeMesa(int valor, int maximo) {
+        List<Carta> retiradas = new ArrayList<>();
+        Iterator<Carta> it = cartasEnMesa.iterator();
+        while (it.hasNext() && retiradas.size() < maximo) {
+            Carta c = it.next();
+            if (c.valor() == valor) {
+                retiradas.add(c);
+                it.remove();
+            }
+        }
         return retiradas;
     }
 

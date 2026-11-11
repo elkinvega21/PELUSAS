@@ -1,0 +1,126 @@
+/* Menú central retro y Pelusas animadas en el suelo */
+.menu-pelusas {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.menu-pelusa-track {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  animation: pelusa-recorrido 16s linear infinite;
+}
+
+.menu-pelusa-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6));
+  animation: pelusa-salto 1.3s ease-in-out infinite;
+}
+
+@keyframes pelusa-recorrido {
+  from {
+    transform: translateX(-100px);
+  }
+
+  to {
+    transform: translateX(calc(100vw + 100px));
+  }
+}
+
+@keyframes pelusa-salto {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.menu-container {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 10;
+  user-select: none;
+  width: 100%;
+  max-width: 420px;
+}
+
+.menu-container .retro-btn {
+  width: 380px !important;
+  max-width: 90vw !important;
+  min-width: 380px !important;
+  height: 52px !important;
+  padding: 0 16px !important;
+  font-size: 11px !important;
+  letter-spacing: 1.5px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 440px) {
+  .menu-container .retro-btn {
+    width: 92vw !important;
+    min-width: 0 !important;
+    font-size: 9.5px !important;
+  }
+}
+
+.btn-multiplayer-local {
+  background-color: #2563eb !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+}
+
+.btn-multiplayer-local:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.btn-multiplayer-online {
+  background-color: #059669 !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+}
+
+.btn-multiplayer-online:hover {
+  background-color: #047857 !important;
+}
+
+.btn-join-code-menu {
+  background-color: #4f46e5 !important;
+  border-color: #818cf8 !important;
+  color: #ffffff !important;
+}
+
+.btn-join-code-menu:hover {
+  background-color: #4338ca !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-pelusa-track,
+  .menu-pelusa-image {
+    animation: none;
+  }
+}
+

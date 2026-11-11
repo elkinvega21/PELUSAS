@@ -3,6 +3,8 @@ package com.pelusas.game.domain;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -119,10 +121,13 @@ class SimulacionReglasTest {
         int enMesaAntes = activo.getCartasEnMesa().size();
         boolean repetida = activo.tieneEnMesa(valor);
         boolean debePerder = repetida && enMesaAntes + 1 >= 3;
+        Map<String, Integer> cartasAntesPorOtro = new HashMap<>();
         int debenRobarse = 0;
         for (Jugador otro : jugadores) {
             if (otro != activo) {
-                debenRobarse += otro.getMesaAgrupada().getOrDefault(valor, 0);
+                int cant = otro.getMesaAgrupada().getOrDefault(valor, 0);
+                cartasAntesPorOtro.put(otro.getNombre(), cant);
+                debenRobarse += Math.min(Jugador.MAX_CARTAS_ROBO, cant);
             }
         }
         int descarteAntes = p.getDescarte().size();
@@ -161,7 +166,14 @@ class SimulacionReglasTest {
                 assertEquals(FaseTurno.BUSCANDO, p.getFase(), contexto);
                 for (Jugador otro : jugadores) {
                     if (otro != activo) {
-                        assertFalse(otro.tieneEnMesa(valor), "nadie más conserva ese valor" + contexto);
+                        int cantAntes = cartasAntesPorOtro.getOrDefault(otro.getNombre(), 0);
+                        if (cantAntes <= Jugador.MAX_CARTAS_ROBO) {
+                            assertFalse(otro.tieneEnMesa(valor), "nadie más conserva ese valor" + contexto);
+                        } else {
+                            assertEquals(cantAntes - Jugador.MAX_CARTAS_ROBO,
+                                    otro.getMesaAgrupada().getOrDefault(valor, 0),
+                                    "conserva las cartas excedentes de 3" + contexto);
+                        }
                     }
                 }
             }
@@ -221,7 +233,7 @@ class SimulacionReglasTest {
         for (int v = Carta.VALOR_MINIMO; v <= Carta.VALOR_MAXIMO; v++) {
             final int valor = v;
             long conEseValor = p.getJugadores().stream().filter(j -> j.tieneEnMesa(valor)).count();
-            assertTrue(conEseValor <= 1, "el valor " + v + " está en mesa de varios jugadores" + contexto);
+            assertTrue(conEseValor <= 2, "el valor " + v + " está en mesa de varios jugadores" + contexto);
         }
 
         // La partida está finalizada si y solo si el mazo está vacío.
@@ -283,3 +295,4 @@ class SimulacionReglasTest {
         return 0;
     }
 }
+
