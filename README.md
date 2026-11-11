@@ -6,7 +6,10 @@ Repositorio oficial: [https://github.com/elkinvega21/PELUSAS.git](https://github
 ---
 
 ##  Integrantes del Equipo
-- **Estudiante(s):** Elkin Vega
+- **Estudiante(s):** 
+Elkin Darío Vega Cáceres
+Juan Pablo Quiñones Tobón
+Juan Pablo SUcerquia Ruiz
 
 ---
 
