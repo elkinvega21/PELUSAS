@@ -3,6 +3,9 @@ import { expect } from '@playwright/test';
 export const activeCards = page => page.locator('.south-cards-rack img');
 export const rivalCards = page => page.locator('.table-seat .seat-cards-shelf img');
 
+/** Texto del turno del jugador N en el tablero: "Jugador N (¡TU TURNO!)". */
+export const turnTitle = numero => new RegExp(`Jugador ${numero} \\(¡?TU TURNO!?\\)`);
+
 export async function readCardValues(cards) {
   const altTexts = await cards.evaluateAll(images => images.map(image => image.getAttribute('alt')));
   return altTexts
@@ -19,14 +22,23 @@ export async function readSafePoints(page) {
   return Number(match[1]);
 }
 
-/** Texto del turno del jugador N en el tablero: "Jugador N (¡TU TURNO!)". */
-export const turnTitle = numero => new RegExp(`Jugador ${numero} \\(¡?TU TURNO!?\\)`);
-
 /** Fija el valor (1-10) de la próxima carta que saque el mazo. */
 export async function setNextCardValue(page, value) {
   await page.evaluate(cardValue => {
     Math.random = () => (cardValue - 1 + 0.5) / 10;
   }, value);
+}
+
+export async function startGame(world, randomValue = 0.2) {
+  const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:5176';
+  await world.page.addInitScript(value => {
+    Math.random = () => value;
+  }, randomValue);
+  await world.page.goto(baseUrl);
+  await world.page.getByRole('button', { name: 'JUGAR' }).click();
+  await world.page.getByRole('button', { name: 'COMENZAR PARTIDA' }).click();
+  await expect(world.page.locator('.square-table-screen')).toBeVisible();
+  await expect(world.page.locator('.south-title')).toContainText(turnTitle(1));
 }
 
 export async function drawCard(world, trigger = 'button') {

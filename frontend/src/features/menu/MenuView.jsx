@@ -1,4 +1,5 @@
 import React from 'react';
+import { Fireworks } from './Fireworks';
 import './MenuView.css';
 
 const MENU_PELUSAS = Array.from({ length: 10 }, (_, index) => `/cards/Pelusa${index + 1}.png`);
@@ -6,6 +7,7 @@ const MENU_PELUSAS = Array.from({ length: 10 }, (_, index) => `/cards/Pelusa${in
 export function MenuView({ onPlay, onOpenSettings, onOpenLeaderboard, onOpenJoinCode }) {
   return (
     <>
+      <Fireworks />
       <div className="menu-pelusas" aria-hidden="true">
         {MENU_PELUSAS.map((src, index) => (
           <div
