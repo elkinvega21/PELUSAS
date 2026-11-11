@@ -3,6 +3,7 @@ import { soundManager } from './utils/soundManager';
 import { LobbyView } from './components/LobbyView';
 import { GameBoardView } from './components/GameBoardView';
 import { SettingsModal } from './components/SettingsModal';
+import { Fireworks } from './components/Fireworks';
 import './App.css';
 
 const MENU_PELUSAS = Array.from({ length: 10 }, (_, index) => `/cards/Pelusa${index + 1}.png`);
@@ -36,6 +37,7 @@ function App() {
       {/* 1. Menú Principal */}
       {currentView === 'menu' && (
         <>
+          <Fireworks />
           <div className="menu-pelusas" aria-hidden="true">
             {MENU_PELUSAS.map((src, index) => (
               <div
@@ -102,5 +104,3 @@ function App() {
 }
 
 export default App;
-
-

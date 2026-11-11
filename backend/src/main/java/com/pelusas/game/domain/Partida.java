@@ -25,7 +25,7 @@ public class Partida {
 
     public static final int MIN_JUGADORES = 2;
     /** Con esta cantidad de cartas delante (incluida la repetida), repetir un valor hace perder el turno. */
-    public static final int CARTAS_PARA_PERDER_TURNO = 3;
+    public static final int CARTAS_PARA_PERDER_TURNO = 4;
 
     private final UUID id;
     private final LocalDateTime fechaCreacion;
