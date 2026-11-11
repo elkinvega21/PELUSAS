@@ -19,6 +19,16 @@ export async function readSafePoints(page) {
   return Number(match[1]);
 }
 
+/** Texto del turno del jugador N en el tablero: "Jugador N (¡TU TURNO!)". */
+export const turnTitle = numero => new RegExp(`Jugador ${numero} \\(¡?TU TURNO!?\\)`);
+
+/** Fija el valor (1-10) de la próxima carta que saque el mazo. */
+export async function setNextCardValue(page, value) {
+  await page.evaluate(cardValue => {
+    Math.random = () => (cardValue - 1 + 0.5) / 10;
+  }, value);
+}
+
 export async function drawCard(world, trigger = 'button') {
   world.cardsBeforeDraw = await activeCards(world.page).count();
 
